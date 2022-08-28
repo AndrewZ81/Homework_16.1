@@ -5,3 +5,4 @@ class FlaskConfig:
     ORDERS_PATH = "data/orders.json"
     OFFERS_PATH = "data/offers.json"
     SQLALCHEMY_DATABASE_URI = "sqlite:///data/database.db"
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
