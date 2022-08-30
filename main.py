@@ -34,14 +34,20 @@ def page_not_found(error):
     return """<h3>Похоже, такого пути не существует.</h3>""", 404
 
 
-# Выполняем до первого запроса к приложению
 @app.before_first_request
 def load_tables():
-    db.drop_all()  # Удаляем старые таблицы, опционально
-    db.create_all()  # Создаём новые таблицы
-    users = UsersDAO(FlaskConfig.USERS_PATH).get_users()  # Получаем пользователей в формате списка
-    orders = OrdersDAO(FlaskConfig.ORDERS_PATH).get_orders()  # Получаем заказы в формате списка
-    offers = OffersDAO(FlaskConfig.OFFERS_PATH).get_offers()  # Получаем отклики в формате списка
+    """
+    Создаёт и заполняет таблицы до первого запроса к приложению, сохраняя изменения
+    :return: Таблицы с сохранёнными данными
+    """
+    # Удаляём старые таблицы и создаём макеты новых. ОПЦИОНАЛЬНО!
+    db.drop_all()
+    db.create_all()
+
+    # Получаем данные для наполнения таблиц
+    users = UsersDAO(FlaskConfig.USERS_PATH).get_users()
+    orders = OrdersDAO(FlaskConfig.ORDERS_PATH).get_orders()
+    offers = OffersDAO(FlaskConfig.OFFERS_PATH).get_offers()
 
     # Наполняем таблицы данными
     db.session.add_all(users)

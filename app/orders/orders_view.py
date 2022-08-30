@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify  # Подключаем для создания блюпринтов
-from app.models import Orders
+from app.models import Orders, db
 
 # Создаём блюпринт страницы заказов (-а)
 orders_blueprint = Blueprint("orders_blueprint", __name__, url_prefix="/orders")
@@ -53,3 +53,19 @@ def show_order(order_id):
         raise AttributeError("Похоже, такого ID не существует")
     else:
         return jsonify(order_for_output)
+
+
+@orders_blueprint.route("/<int:order_id>", methods=["DELETE"])
+def delete_order(order_id):
+    """
+    Cоздаёт эндпоинт удаления одного заказа
+    :return: Комментарий к операции
+    """
+    try:
+        order = Orders.query.get(order_id)
+        db.session.delete(order)
+        db.session.commit()
+    except Exception:
+        raise Exception("Похоже, такого ID не существует")
+    else:
+        return f"<h3>Заказ с ID = {order_id} удалён</h3>"

@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify  # Подключаем для создания блюпринтов
-from app.models import Users
+from app.models import Users, db
 
 # Создаём блюпринт страницы пользователей (-я)
 users_blueprint = Blueprint("users_blueprint", __name__, url_prefix="/users")
@@ -14,17 +14,17 @@ def show_all_users():
     users_list = Users.query.all()
     users_for_output = []
     for i in users_list:
-       users_for_output.append(
-                               {
-                                "id": i.id,
-                                "first_name": i.first_name,
-                                "last_name": i.last_name,
-                                "age": i.age,
-                                "email": i.email,
-                                "role": i.role,
-                                "phone": i.phone
-                               }
-                              )
+        users_for_output.append(
+                                {
+                                 "id": i.id,
+                                 "first_name": i.first_name,
+                                 "last_name": i.last_name,
+                                 "age": i.age,
+                                 "email": i.email,
+                                 "role": i.role,
+                                 "phone": i.phone
+                                }
+                               )
     return jsonify(users_for_output)
 
 
@@ -45,7 +45,24 @@ def show_user(user_id):
                            "role": user.role,
                            "phone": user.phone
                           }
+
     except AttributeError:
         raise AttributeError("Похоже, такого ID не существует")
     else:
         return jsonify(user_for_output)
+
+
+@users_blueprint.route("/<int:user_id>", methods=["DELETE"])
+def delete_user(user_id):
+    """
+    Cоздаёт эндпоинт удаления одного пользователя
+    :return: Комментарий к операции
+    """
+    try:
+        user = Users.query.get(user_id)
+        db.session.delete(user)
+        db.session.commit()
+    except Exception:
+        raise Exception("Похоже, такого ID не существует")
+    else:
+        return f"<h3>Пользователь с ID = {user_id} удалён</h3>"
