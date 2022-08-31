@@ -26,12 +26,12 @@ db.init_app(app)  # Связываем БД с приложением
 # Добавляем обработчики ошибок
 @app.errorhandler(500)
 def internal_server_error(error):
-    return """<h3>Похоже, такого ID не существует.</h3>""", 500
+    return """<h3>Ошибка при работе с базой данных.</h3>""", 500
 
 
 @app.errorhandler(404)
 def page_not_found(error):
-    return """<h3>Похоже, такого пути не существует.</h3>""", 404
+    return """<h3>Такого пути не существует.</h3>""", 404
 
 
 @app.before_first_request
